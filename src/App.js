@@ -20,7 +20,14 @@ const App = () => {
     },
   ];
 
-  const [searchTerm, setSearchTerm] = React.useState('React');
+  // Logical OR returns localStorage.getItem('search') if it's not null and 'React' otherwise
+  const [searchTerm, setSearchTerm] = React.useState(
+    localStorage.getItem('search') || 'React'
+  );
+
+  React.useEffect(() => {
+    localStorage.setItem('search', searchTerm);
+  }, [searchTerm]);
 
   const handleSearch = (event) => {
     setSearchTerm(event.target.value);
@@ -55,15 +62,17 @@ const Search = (props) => (
   </div>
 );
 
-const List1 = ({ list }) => (
+// This version may not be the most concise, but it is the easiest to understand.
+// Always aim for readability, especially when working in a team of people
+const List = ({ list }) => (
   <ul>
     {list.map((item) => (
-      <Item1 key={item.objectID} item={item} />
+      <Item key={item.objectID} item={item} />
     ))}
   </ul>
 );
 
-const Item1 = ({ item }) => (
+const Item = ({ item }) => (
   <li>
     <span>
       <a href={item.url}>{item.title}</a>
@@ -72,55 +81,6 @@ const Item1 = ({ item }) => (
     <span>{item.num_comments}</span>
     <span>{item.points}</span>
   </li>
-);
-
-// Spread and Rest Operators
-// Rather than passing the item as an object from List to Item component,
-// we are passing every property of the item object:
-const List2 = ({ list }) => (
-  <ul>
-    {list.map((item) => (
-      <Item
-        key={item.objectID}
-        title={item.title}
-        url={item.url}
-        author={item.author}
-        num_comments={item.num_comments}
-        points={item.points}
-      />
-    ))}
-  </ul>
-);
-
-const Item = ({ title, url, author, num_comments, points }) => (
-  <li>
-    <span>
-      <a href={url}>{title}</a>
-    </span>
-    <span>{author}</span>
-    <span>{num_comments}</span>
-    <span>{points}</span>
-  </li>
-);
-
-// Instead of passing each property one at a time via props from List to Item component as before,
-// we can use JavaScript's spread operator to pass all the object's key/value pairs as attribute/value
-// pairs to a JSX element:
-const List3 = ({ list }) => (
-  <ul>
-    {list.map((item) => (
-      <Item key={item.objectID} {...item} />
-    ))}
-  </ul>
-);
-
-// The rest operator is used to destructure the objectID from the rest of the item object. Afterward, the item is spread with its key/values pairs into the Item component.
-const List = ({ list }) => (
-  <ul>
-    {list.map(({ objectID, ...item }) => (
-      <Item key={objectID} {...item} />
-    ))}
-  </ul>
 );
 
 export default App;
